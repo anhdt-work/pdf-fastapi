@@ -44,7 +44,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         
         # Read metadata from result.json if it exists
         try:
-            with open('result.json', 'r', encoding='utf-8') as f:
+            with open('template/result.json', 'r', encoding='utf-8') as f:
                 metadata = json.load(f)
         except FileNotFoundError:
             metadata = {}
