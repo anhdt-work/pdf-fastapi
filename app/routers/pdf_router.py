@@ -1,9 +1,11 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+# import uuid
 import json
+import os 
 from typing import Dict, Any, List
-from app.services.storage_service import storage_service
 from app.services.pdf_service import pdf_service
+from app.services.vintern import vintern_ai_service
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,7 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/upload/", response_model=Dict[str, Any])
-async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
+async def upload_pdf(list_index: str, file: UploadFile = File(...)) -> JSONResponse:
     """
     Upload a PDF file, convert it to PNG, and store in Google Cloud Storage.
     
@@ -27,34 +29,44 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             raise HTTPException(
                 status_code=400,
                 detail="Only PDF files are allowed"
-            )
-        
+            )            
+        first_page_indexes = set(map(int, list_index.strip().split(',')))
+        if not first_page_indexes:
+            first_page_indexes = {1}
+
         # Read file content
         content = await file.read()
         
         # Convert PDF to PNG
         png_images = await pdf_service.convert_to_png(content)
         
-        # Upload PNG images to Google Cloud Storage
-        logger.info("Uploading PNG images to Google Cloud Storage...")
-        upload_results = await storage_service.upload_png_images(
-            images=png_images,
-            original_filename=file.filename.replace('.pdf', '')
-        )
+        # Create a unique folder for this upload
+        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+        folder_name = file.filename.split('.')[0]
+        folder_key = os.path.join(parent_dir, "images", folder_name)
+        os.makedirs(folder_key, exist_ok=True)
         
-        # Read metadata from result.json if it exists
-        try:
-            with open('template/result.json', 'r', encoding='utf-8') as f:
-                metadata = json.load(f)
-        except FileNotFoundError:
-            metadata = {}
+        # Save images to the folder
+        for i, image in enumerate(png_images):
+            png_filename = os.path.join(folder_key, f"{i+1}.PNG")
+            with open(png_filename, 'wb') as f:
+                f.write(image)
+                
+        
+        # Process image to AI model
+        for i, image in enumerate(png_images):
+            pixel_values = VinternAIService.generate_input(image)
+           
+            # For example: await ai_model.process_image(image, first_page_indexes)
+            logger.info(f"Processed page {i+1} with AI model")
+        
         
         # Combine upload results with metadata
         response_data = {
             **metadata,
             "filename": file.filename,
             "total_pages": len(png_images),
-            "png_uploads": upload_results
+            # "png_uploads": upload_results
         }
         
         return JSONResponse(

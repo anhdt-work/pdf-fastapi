@@ -15,20 +15,26 @@ logger = logging.getLogger(__name__)
 
 
 class VinternAIService:
-    def __init__(self):
-        model = AutoModel.from_pretrained(
-            MODEL_NAME,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-            trust_remote_code=True,
-            use_flash_attn=False,
-        ).eval().cuda()
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True, use_fast=False)
-        self.tokenizer = tokenizer
-        self.model = model
-        self.generation_config = dict(
-            max_new_tokens=2048, do_sample=False, num_beams=3, repetition_penalty=1.2
-        )
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            # Load model and tokenizer only once
+            model = AutoModel.from_pretrained(
+                MODEL_NAME,
+                torch_dtype=torch.bfloat16,
+                low_cpu_mem_usage=True,
+                trust_remote_code=True,
+                use_flash_attn=False,
+            ).eval().cuda()
+            tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True, use_fast=False)
+            cls._instance.tokenizer = tokenizer
+            cls._instance.model = model
+            cls._instance.generation_config = dict(
+                max_new_tokens=2048, do_sample=False, num_beams=3, repetition_penalty=1.2
+            )
+        return cls._instance
 
     def build_transform(self, input_size):
         MEAN, STD = IMAGENET_MEAN, IMAGENET_STD
@@ -108,3 +114,5 @@ class VinternAIService:
     def generate_chat(self, pixel_values, prompt):
         response = self.model.chat(self.tokenizer, pixel_values, prompt, self.generation_config)
         return response
+
+vintern_ai_service = VinternAIService()

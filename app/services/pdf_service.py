@@ -29,7 +29,7 @@ class PDFService:
                 img_byte_arr = io.BytesIO()
                 image.save(img_byte_arr, format='PNG')
                 png_images.append(img_byte_arr.getvalue())
-                
+
                 logger.info(f"Converted page {i+1} to PNG")
             
             return png_images
