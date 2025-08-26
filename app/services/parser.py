@@ -52,47 +52,49 @@ class Parser:
         # Example: 123/ABC45/123 -> (123, ABC45/123)
         # Example: Số: 26/BC-ĐT -> (26, BC-ĐT)
         # Example: No: 123/ABC -> (123, ABC)
-        
-        if not text:
-            return "", ""
-        
-        # Clean up the text - remove extra spaces
-        text = text.strip()
-        
-        # Remove common document number prefixes (Vietnamese and English)
-        # Clean up again after prefix removal
-        text = text.strip()
+        try:
+            if not text:
+                return "", ""
 
-        parts = []
-        for char in text:
-            if char == '-':
-                parts = text.split('-', 1)  # Split only once
-                break
-            elif char == '/':
-                parts = text.split('/', 1)  # Split only once
-                break  
-        
-        
-        if len(parts) == 1:
-            # Only one part - check if it's a number or symbol
-            if parts[0].isdigit():
-                return parts[0], ""
-            else:
-                return "", parts[0]
-        
-        # Multiple parts - first part should be number, second part should be symbol
-        if not parts:
-            return  "", ""
-        number_part = parts[0].strip()
-        symbol_part = parts[1].strip() if len(parts) > 1 else ""
-        
-        # Validate that first part is a number
-        numb = 0
-        for char in number_part:
-            if char.isdigit():
-                numb = numb * 10 +  int(char)
-        
-        return numb, symbol_part
+            # Clean up the text - remove extra spaces
+            text = text.strip()
+
+            # Remove common document number prefixes (Vietnamese and English)
+            # Clean up again after prefix removal
+            text = text.strip()
+
+            parts = []
+            for char in text:
+                if char == '-':
+                    parts = text.split('-', 1)  # Split only once
+                    break
+                elif char == '/':
+                    parts = text.split('/', 1)  # Split only once
+                    break
+
+
+            if len(parts) == 1:
+                # Only one part - check if it's a number or symbol
+                if parts[0].isdigit():
+                    return parts[0], ""
+                else:
+                    return "", parts[0]
+
+            # Multiple parts - first part should be number, second part should be symbol
+            if not parts or len(parts) == 0:
+                return  "", ""
+            number_part = parts[0].strip()
+            symbol_part = parts[1].strip() if len(parts) > 1 else ""
+
+            # Validate that first part is a number
+            numb = 0
+            for char in number_part:
+                if char.isdigit():
+                    numb = numb * 10 +  int(char)
+
+            return numb, symbol_part
+        except Exception:
+            return "", ""
     
     def parse_author(self, text: str):
         pass
