@@ -50,23 +50,44 @@ class Parser:
         # Example: 123/ABC45 -> (123, ABC45)
         # Example: 123/ABC45-123 -> (123, ABC45-123)
         # Example: 123/ABC45/123 -> (123, ABC45/123)
-        # Example: 123/ABC45/123 -> (123, ABC45/123)
+        # Example: Số: 26/BC-ĐT -> (26, BC-ĐT)
+        # Example: No: 123/ABC -> (123, ABC)
         
         if not text:
             return "", ""
         
-        # Clean up the text - remove extra spaces and normalize separators
+        # Clean up the text - remove extra spaces
         text = text.strip()
-        text = re.sub(r'\s*[-/]\s*', '-', text) # Convert both - and / to - with no spaces
+        
+        # Remove common document number prefixes (Vietnamese and English)
+        prefixes_to_remove = [
+            r'Số\s*:\s*',      # "Số: " or "Số:"
+            r'No\s*:\s*',      # "No: " or "No:"
+            r'Number\s*:\s*',  # "Number: " or "Number:"
+            r'STT\s*:\s*',     # "STT: " or "STT:"
+            r'#\s*',           # "# " or "#"
+        ]
+        
+        for prefix in prefixes_to_remove:
+            text = re.sub(prefix, '', text, flags=re.IGNORECASE)
+        
+        # Clean up again after prefix removal
+        text = text.strip()
+        
+        # Convert both - and / to - with no spaces (but preserve original structure for splitting)
+        # We'll work with the original text but normalize spaces around separators
+        original_text = text
+        text = re.sub(r'\s*[-/]\s*', '-', text)
         
         # Split by hyphen or slash to separate parts (only split once)
+        # Use original_text to preserve the original separators
         parts = []
-        for char in text:
+        for char in original_text:
             if char == '-':
-                parts = text.split('-', 1)  # Split only once
+                parts = original_text.split('-', 1)  # Split only once
                 break
             elif char == '/':
-                parts = text.split('/', 1)  # Split only once
+                parts = original_text.split('/', 1)  # Split only once
                 break  
         
         
@@ -78,6 +99,7 @@ class Parser:
                 return "", parts[0]
         
         # Multiple parts - first part should be number, second part should be symbol
+        print(parts)
         number_part = parts[0].strip()
         symbol_part = parts[1].strip() if len(parts) > 1 else ""
         
