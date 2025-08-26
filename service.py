@@ -29,10 +29,10 @@ class ServiceManager:
         
         print("🚀 Starting PDF-to-Text API...")
         
-        # Start the process
+        # Start the process with uvicorn
         with open(self.log_file, 'w') as log:
             process = subprocess.Popen(
-                [sys.executable, self.app_script],
+                [sys.executable, "-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 cwd=os.getcwd()
@@ -95,8 +95,10 @@ class ServiceManager:
     def _kill_by_name(self):
         """Kill process by name as fallback"""
         try:
-            subprocess.run(["pkill", "-f", "python main.py"], check=False)
-            print("✅ Killed processes by name")
+            # Kill uvicorn processes
+            subprocess.run(["pkill", "-f", "uvicorn"], check=False)
+            subprocess.run(["pkill", "-f", "main:app"], check=False)
+            print("✅ Killed uvicorn processes by name")
             return True
         except:
             print("⚠️  Could not kill processes by name")
