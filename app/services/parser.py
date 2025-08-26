@@ -6,7 +6,7 @@ class Parser:
         pass
     
     def parse_date(self, text: str) -> list[str | None]:
-        # parse date from text format DD-MM-YYYY or DD/MM/YYYY, return a list [day, month, year]
+        # parse date from text format DD-MM-YYYY or DD/MM/YYYY or YYYY-MM-DD or YYYY/MM/DD or YYYY-MM  return a list [day, month, year]
         if not text:
             return ["", "", ""]
         
@@ -14,7 +14,10 @@ class Parser:
         date_patterns = [
             r'\d{2}-\d{2}-\d{4}',  # DD-MM-YYYY
             r'\d{2}/\d{2}/\d{4}',  # DD/MM/YYYY
-            r'\d{2}\.\d{2}\.\d{4}' # DD.MM.YYYY
+            r'\d{2}\.\d{2}\.\d{4}', # DD.MM.YYYY
+            r'\d{4}-\d{2}-\d{2}', # YYYY-MM-DD
+            r'\d{4}/\d{2}/\d{2}', # YYYY/MM/DD
+            r'\d{4}-\d{2}', # YYYY-MM
         ]
         
         for pattern in date_patterns:
@@ -33,6 +36,8 @@ class Parser:
                 
                 if len(parts) == 3:
                     return [parts[0], parts[1], parts[2]]
+                elif len(parts) == 2:
+                    return ["", parts[1], parts[0]]
         
         return ["", "", ""]
     
@@ -42,12 +47,17 @@ class Parser:
         # Example: 123 -> (123, "")
         # Example: ABC45 -> ("", ABC45)
         # Example: 123 - ABC45 -> (123, ABC45)  # handles spaces around hyphen
+        # Example: 123/ABC45 -> (123, ABC45)
+        # Example: 123/ABC45-123 -> (123, ABC45-123)
+        # Example: 123/ABC45/123 -> (123, ABC45/123)
+        # Example: 123/ABC45/123 -> (123, ABC45/123)
         
         if not text:
             return "", ""
         
-        # Clean up the text - remove extra spaces around hyphens
-        text = re.sub(r'\s*-\s*', '-', text.strip())
+        # Clean up the text - remove extra spaces and normalize separators
+        text = text.strip()
+        text = re.sub(r'\s*[-/]\s*', '-', text)  # Convert both - and / to - with no spaces
         
         # Split by hyphen to separate parts
         parts = text.split('-')
