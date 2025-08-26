@@ -18,30 +18,61 @@ from app.utils.prom import GET_AUTHOR, GET_DATE_PROMPT, GET_DOCUMENT_NUMBER, GET
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1", tags=["PDF"])
+router = APIRouter(tags=["PDF"])
 
 
-@router.post("/upload/", response_model=Dict[str, Any])
+@router.post("/upload", response_model=Dict[str, Any])
 async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
     """
-    Upload a PDF file, convert it to PNG, and store in Google Cloud Storage.
+    Upload a PDF file, convert it to PNG, and extract text using AI.
     
     Args:
         file (UploadFile): The PDF file to upload
         
     Returns:
-        JSONResponse containing upload details and metadata
+        JSONResponse containing extracted metadata and text
+    Raises:
+        HTTPException: If file validation fails or processing errors occur
+        
+    Times:
+        - PDF to PNG conversion: Logged during processing
+        - Text extraction: Logged during processing
+        - Total processing time: Logged at completion
     """
-    folder_name = file.filename.split('.')[0]
     try:
-        # Validate file type
-        if not file.content_type == "application/pdf":
+        # Validate file exists and has a filename
+        if not file.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="No file provided"
+            )
+        
+        # Validate file extension
+        if not file.filename.lower().endswith('.pdf'):
             raise HTTPException(
                 status_code=400,
                 detail="Only PDF files are allowed"
-            )            
+            )
+        
+        # Validate file content type (if available)
+        if file.content_type and file.content_type != "application/pdf":
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file type. Only PDF files are allowed"
+            )
+            
+        # Get folder name without extension
+        folder_name = file.filename.rsplit('.', 1)[0] if '.' in file.filename else file.filename
+        
         # Read file content
         content = await file.read()
+        
+        # Validate file is not empty
+        if not content:
+            raise HTTPException(
+                status_code=400,
+                detail="Uploaded file is empty"
+            )
         
         # Convert PDF to PNG
         png_images = await pdf_service.convert_to_png(content)
@@ -85,18 +116,6 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         day, month, year = parser.parse_date(date_data)
         document_number, document_symbol = parser.parse_document_number(document_number_data)
         # Do all the log here to check each value after parsing
-        logger.info(f"Date data: {date_data}")
-        logger.info(f"Document number data: {document_number_data}")
-        logger.info(f"Author data: {author_data}")
-        logger.info(f"Title data: {title_data}")
-        logger.info(f"Day: {day}")
-        logger.info(f"Month: {month}")
-        logger.info(f"Year: {year}")
-        logger.info(f"Document number: {document_number}")
-        logger.info(f"Document symbol: {document_symbol}")
-        logger.info(f"Author: {author_data}")
-        logger.info(f"Title: {title_data}")
-        
         
         result['SheetTotal'] = len(png_images)
         result['IssuedYear'] = year
@@ -132,11 +151,14 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             status_code=200
         )
 
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        logger.error(f"Error processing PDF name: {str(folder_name)}")
+        logger.error(f"Error processing PDF '{file.filename if file and file.filename else 'unknown'}': {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail=f"Internal server error while processing PDF: {str(e)}"
         ) 
     
 
