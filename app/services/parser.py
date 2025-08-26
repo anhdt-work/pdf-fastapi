@@ -60,17 +60,6 @@ class Parser:
         text = text.strip()
         
         # Remove common document number prefixes (Vietnamese and English)
-        prefixes_to_remove = [
-            r'Số\s*:\s*',      # "Số: " or "Số:"
-            r'No\s*:\s*',      # "No: " or "No:"
-            r'Number\s*:\s*',  # "Number: " or "Number:"
-            r'STT\s*:\s*',     # "STT: " or "STT:"
-            r'#\s*',           # "# " or "#"
-        ]
-        
-        for prefix in prefixes_to_remove:
-            text = re.sub(prefix, '', text, flags=re.IGNORECASE)
-        
         # Clean up again after prefix removal
         text = text.strip()
 
@@ -98,10 +87,12 @@ class Parser:
         symbol_part = parts[1].strip() if len(parts) > 1 else ""
         
         # Validate that first part is a number
-        if not number_part.isdigit():
-            return "", symbol_part
+        numb = 0
+        for char in number_part:
+            if char.isdigit():
+                numb = numb * 10 +  int(char)
         
-        return number_part, symbol_part
+        return numb, symbol_part
     
     def parse_author(self, text: str):
         pass
