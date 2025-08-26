@@ -94,7 +94,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         
         # Process image to AI model
         full_text = ""
-        signed = ""
+        final_signed = ""
         for i in range(len(png_images)):
             image_path = os.path.join(folder_key, f"{i+1}.PNG")
             pixel_values = vintern_ai_service.generate_input(image_path)
@@ -115,11 +115,12 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
                 title_data = vintern_ai_service.generate_chat(pixel_values, GET_TITLE_PROMPT)
                 torch.cuda.empty_cache()  # if using GPU
                 gc.collect()
-            if i == len(png_images) - 1:
-                error = 'Signed'
-                signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
-                torch.cuda.empty_cache()  # if using GPU
-                gc.collect()
+            error = 'Signed'
+            signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
+            if signed and signed != "Không có":
+                final_signed = signed
+            torch.cuda.empty_cache()  # if using GPU
+            gc.collect()
             error = 'Full text'
             full_text += vintern_ai_service.generate_chat(pixel_values, GET_FULL_TEXT_PROMPT)
             torch.cuda.empty_cache()  # if using GPU
@@ -141,7 +142,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         result['Field6'] = f"{day}/{month}/{year}"
         result['Field7'] = parser.parse_title(title_data)
         result['Field8'] = parser.parse_full_title(title_data)
-        result['Field11'] = signed
+        result['Field11'] = final_signed
         result['Field13'] = day
         result['Field14'] = month
         result['Field15'] = year

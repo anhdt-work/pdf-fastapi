@@ -8,4 +8,4 @@ GET_AUTHOR = """<image>\n Lấy tên cơ quan tổ chức ban hành, trả về 
 
 GET_TITLE_PROMPT = """<image>\n Lấy tên loại và trích yếu nội dung văn bản, trả về tên loại và trích yếu nội dung văn bản (thường phần trên chính giữa văn bản)"""
 
-GET_DOCUMENT_SIGNED = """<image>\n Lấy tên người ký văn bản, trả về tên người ký văn bản (thường ở góc dưới cùng bên phải văn bản)."""
+GET_DOCUMENT_SIGNED = """<image>\n Lấy tên người ký văn bản, trả về tên người ký văn bản (thường nằm phía bên phải dưới cùng của văn bản). Nếu không thấy thì trả về 'Không có'."""
