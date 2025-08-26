@@ -106,10 +106,13 @@ class Parser:
         return ""
 
     def parse_full_title(self, text: str) -> str | None:
-        part = text.split("*")
-        if len(part) > 1:
-            return part[-1].lstrip()
-        return text
+        try:
+            part = text.split("*")
+            if len(part) > 1:
+                return part[-1].lstrip()
+            return text
+        except Exception:
+            return text
 
     def remove_accents(self, text: str):
         if not unicodedata.is_normalized("NFC", text):
