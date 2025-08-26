@@ -117,7 +117,13 @@ class Parser:
             if title.lower() in text.lower():
                 return title
         return ""
-    
+
+    def parse_full_title(self, text: str) -> str | None:
+        part = text.split("*")
+        if len(part) > 1:
+            return part[-1].lstrip()
+        return text
+
     def remove_accents(self, text: str):
         if not unicodedata.is_normalized("NFC", text):
             text = unicodedata.normalize("NFC", text)

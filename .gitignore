@@ -3,3 +3,5 @@ env/
 app/cloud/
 __pycache__/
 **/.idea/**
+**/model-image/
+**/model_checker.py
