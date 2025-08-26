@@ -31,8 +31,6 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         
     Returns:
         JSONResponse containing extracted metadata and text
-    Raises:
-        HTTPException: If file validation fails or processing errors occur
         
     Times:
         - PDF to PNG conversion: Logged during processing
@@ -116,7 +114,10 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         day, month, year = parser.parse_date(date_data)
         document_number, document_symbol = parser.parse_document_number(document_number_data)
         # Do all the log here to check each value after parsing
-        
+        logger.info(f"Date: {date_data}")
+        logger.info(f"Document number: {document_number_data}")
+        logger.info(f"Author: {author_data}")
+        logger.info(f"Title: {title_data}")
         result['SheetTotal'] = len(png_images)
         result['IssuedYear'] = year
         result['Field1'] = author_data
@@ -160,6 +161,11 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             status_code=500,
             detail=f"Internal server error while processing PDF: {str(e)}"
         ) 
+    finally:
+        # Remove all files in the folder
+        if os.listdir(folder_key):
+            for file in os.listdir(folder_key):
+                os.remove(os.path.join(folder_key, file))
     
 
 
