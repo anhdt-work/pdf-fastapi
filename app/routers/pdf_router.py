@@ -38,6 +38,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         - Text extraction: Logged during processing
         - Total processing time: Logged at completion
     """
+    error = 'Start'
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -98,24 +99,34 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             image_path = os.path.join(folder_key, f"{i+1}.PNG")
             pixel_values = vintern_ai_service.generate_input(image_path)
             if i == 0:
+                error = 'Date'
                 date_data = vintern_ai_service.generate_chat(pixel_values, GET_DATE_PROMPT)
                 torch.cuda.empty_cache()  # if using GPU
                 gc.collect()
+                error = 'Document number'
                 document_number_data = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_NUMBER)
                 torch.cuda.empty_cache()  # if using GPU
                 gc.collect()
+                error = 'Author'
                 author_data = vintern_ai_service.generate_chat(pixel_values, GET_AUTHOR)
                 torch.cuda.empty_cache()  # if using GPU
                 gc.collect()
+                error = 'Title'
                 title_data = vintern_ai_service.generate_chat(pixel_values, GET_TITLE_PROMPT)
                 torch.cuda.empty_cache()  # if using GPU
                 gc.collect()
             if i == len(png_images) - 1:
+                error = 'Signed'
                 signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
+                torch.cuda.empty_cache()  # if using GPU
+                gc.collect()
+            error = 'Full text'
             full_text += vintern_ai_service.generate_chat(pixel_values, GET_FULL_TEXT_PROMPT)
             torch.cuda.empty_cache()  # if using GPU
             gc.collect()
+        error = 'Parse date'
         day, month, year = parser.parse_date(date_data)
+        error = 'Parse document number'
         document_number, document_symbol = parser.parse_document_number(document_number_data)
         # Do all the log here to check each value after parsing
         logger.info(f"Date: {date_data}")
@@ -160,7 +171,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error(f"Error processing PDF '{file.filename if file and file.filename else 'unknown'}': {str(e)}")
+        logger.error(f"Error processing PDF '{file.filename if file and file.filename else 'unknown'}': {str(e)} and error: {error}")
         raise HTTPException(
             status_code=500,
             detail=f"Internal server error while processing PDF: {str(e)}"

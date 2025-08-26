@@ -99,11 +99,18 @@ class Parser:
     def parse_author(self, text: str):
         pass
 
-    def parse_title(self, text: str) -> str | None:
-        for title in titles:
-            if title.lower() in text.lower():
-                return title
-        return ""
+    def parse_title(self, text: str) -> str:
+        if not text or not text.strip():
+            return ""
+        
+        try:
+            text = text.strip()
+            for title in titles:
+                if title.lower() in text.lower():
+                    return title
+            return ""
+        except Exception:
+            return ""
 
     def parse_full_title(self, text: str) -> str | None:
         try:
