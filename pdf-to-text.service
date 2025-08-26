@@ -1,0 +1,26 @@
+[Unit]
+Description=PDF-to-Text AI Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/your/PDF-to-text
+Environment=PATH=/path/to/your/PDF-to-text/env/bin
+ExecStart=/path/to/your/PDF-to-text/env/bin/python main.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pdf-to-text
+
+# Environment variables
+Environment=HOST=0.0.0.0
+Environment=PORT=8000
+Environment=API_PREFIX=/api/v1
+Environment=API_TITLE=PDF-to-Text AI Service
+Environment=API_VERSION=1.0.0
+
+[Install]
+WantedBy=multi-user.target
