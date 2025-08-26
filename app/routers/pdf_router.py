@@ -117,7 +117,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
                 gc.collect()
             error = 'Signed'
             signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
-            if signed and signed != "Không có":
+            if signed and signed != "Không có" or signed != "Không có.":
                 final_signed = signed
             torch.cuda.empty_cache()  # if using GPU
             gc.collect()
