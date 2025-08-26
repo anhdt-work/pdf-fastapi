@@ -6,6 +6,6 @@ GET_DOCUMENT_NUMBER = """<image>\n Lấy số và kí hiệu của văn bản, t
 
 GET_AUTHOR = """<image>\n Lấy tên cơ quan tổ chức ban hành, trả về tên cơ quan tổ chức ban hành (Thường ở góc trên bên trái)."""
 
-GET_TITLE_PROMPT = """<image>\n Lấy tên loại và trích yếu nội dung văn bản, trả về tên loại và trích yếu nội dung văn bản (thường phần trên chính giữa văn bản)"""
+GET_TITLE_PROMPT = """<image>\n Lấy trích yếu nội dung văn bản, trả về trích yếu nội dung văn bản (thường phần trên chính giữa văn bản)"""
 
 # GET_DOCUMENT_TYPE = """<image>\n Lấy tên loại văn bản, trả về tên loại văn bản (thường ở góc trên bên trái văn bản)."""
