@@ -57,10 +57,18 @@ class Parser:
         
         # Clean up the text - remove extra spaces and normalize separators
         text = text.strip()
-        text = re.sub(r'\s*[-/]\s*', '-', text)  # Convert both - and / to - with no spaces
+        text = re.sub(r'\s*[-/]\s*', '-', text) # Convert both - and / to - with no spaces
         
-        # Split by hyphen to separate parts
-        parts = text.split('-')
+        # Split by hyphen or slash to separate parts (only split once)
+        parts = []
+        for char in text:
+            if char == '-':
+                parts = text.split('-', 1)  # Split only once
+                break
+            elif char == '/':
+                parts = text.split('/', 1)  # Split only once
+                break  
+        
         
         if len(parts) == 1:
             # Only one part - check if it's a number or symbol
