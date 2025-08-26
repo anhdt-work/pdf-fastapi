@@ -73,21 +73,14 @@ class Parser:
         
         # Clean up again after prefix removal
         text = text.strip()
-        
-        # Convert both - and / to - with no spaces (but preserve original structure for splitting)
-        # We'll work with the original text but normalize spaces around separators
-        original_text = text
-        text = re.sub(r'\s*[-/]\s*', '-', text)
-        
-        # Split by hyphen or slash to separate parts (only split once)
-        # Use original_text to preserve the original separators
+
         parts = []
-        for char in original_text:
+        for char in text:
             if char == '-':
-                parts = original_text.split('-', 1)  # Split only once
+                parts = text.split('-', 1)  # Split only once
                 break
             elif char == '/':
-                parts = original_text.split('/', 1)  # Split only once
+                parts = text.split('/', 1)  # Split only once
                 break  
         
         
@@ -99,7 +92,8 @@ class Parser:
                 return "", parts[0]
         
         # Multiple parts - first part should be number, second part should be symbol
-        print(parts)
+        if not parts:
+            return  "", ""
         number_part = parts[0].strip()
         symbol_part = parts[1].strip() if len(parts) > 1 else ""
         
