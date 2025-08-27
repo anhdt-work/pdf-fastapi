@@ -55,7 +55,7 @@ class Parser:
     def _clean_symbol(s: str) -> str:
         return s.strip(_TRIM_CHARS)
     
-    def parse_document_number(text: str) -> tuple[str, str]:
+    def parse_document_number(self, text: str) -> tuple[str, str]:
         """
         Trả về (number, symbol)
         Ví dụ:
