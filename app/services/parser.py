@@ -171,6 +171,8 @@ titles = [
 
 def format_text(text: str) -> str:
     text = text.strip()
+    if text and text[0] == "-":
+        text = text[1:]
     # remove all multiple spaces and newlines
     text = text.replace("\n", "")
     text = text.replace("Kí hiệu", "")
