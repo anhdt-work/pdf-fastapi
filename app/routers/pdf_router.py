@@ -132,6 +132,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         # Do all the log here to check each value after parsing
         logger.info(f"Date: {date_data}")
         logger.info(f"Document number: {document_number_data}")
+        logger.info(f"document_symbol: {document_symbol}")
         logger.info(f"Author: {author_data}")
         logger.info(f"Title: {title_data}")
         result['SheetTotal'] = len(png_images)
