@@ -46,6 +46,9 @@ class Parser:
                     return ["", parts[1], parts[0]]
         
         return ["", "", ""]
+
+    def format_text(text: str) -> str:
+        return re.sub(r'^[^A-Za-z0-9]+|[^A-Za-z0-9]+$', '', text).strip()
     
     def parse_document_number(self, text: str) -> tuple[str, str]:
         # parse document number from text format NUMBER-SYMBOL or NUMBER, return a tuple [number, symbol] 
@@ -62,12 +65,10 @@ class Parser:
             if not text:
                 return "", ""
 
-            # Clean up the text - remove extra spaces
             text = text.strip()
 
-            # Remove common document number prefixes (Vietnamese and English)
-            # Clean up again after prefix removal
-            text = text.strip()
+            # Bỏ prefix thường gặp
+            text = re.sub(r'^(Số:|So:|No:)\s*', '', text, flags=re.IGNORECASE).strip()
 
             parts = []
             is_number = False
@@ -79,23 +80,19 @@ class Parser:
                     break
 
             if len(parts) == 1:
-                # Only one part - check if it's a number or symbol
                 if parts[0].isdigit():
                     return parts[0], ""
                 else:
                     return "", format_text(parts[0])
 
-            # Multiple parts - first part should be number, second part should be symbol
             if not parts or len(parts) == 0:
-                return  "", ""
+                return "", ""
+
             number_part = parts[0].strip()
             symbol_part = parts[1].strip() if len(parts) > 1 else ""
 
-            # Validate that first part is a number
-            numb = 0
-            for char in number_part:
-                if char.isdigit():
-                    numb = numb * 10 +  int(char)
+            # Convert number part thành số
+            numb = "".join([c for c in number_part if c.isdigit()])
 
             return numb, format_text(symbol_part)
         except Exception:
