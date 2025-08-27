@@ -4,7 +4,7 @@ GET_DATE_PROMPT = """<image>\n Lấy ngày ban hành văn bản, trả về dư�
 
 GET_DOCUMENT_NUMBER = """<image>\n Lấy số và kí hiệu của văn bản, trả về dưới dạng NUMBER-SYMBOL (thuờng ở góc trên bên trái văn bản)."""
 
-GET_AUTHOR = """<image>\n Lấy tên cơ quan tổ chức ban hành, trả về tên cơ quan tổ chức ban hành (Thường ở góc trên bên trái)."""
+GET_AUTHOR = """<image>\n Lấy tên cơ quan tổ chức ban hành, trả về nguyên dạng (Thường ở góc trên bên trái)."""
 
 GET_TITLE_PROMPT = """<image>\n Lấy tên loại và trích yếu nội dung văn bản, trả về tên loại và trích yếu nội dung văn bản (thường phần trên chính giữa văn bản)"""
 
