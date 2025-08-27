@@ -1,5 +1,8 @@
 import re
 import unicodedata
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Parser:
     def __init__(self):
@@ -93,6 +96,8 @@ class Parser:
 
             # Convert number part thành số
             numb = "".join([c for c in number_part if c.isdigit()])
+
+            logger.info(f"format_text: {document_symbol}")
 
             return numb, format_text(symbol_part)
         except Exception:
