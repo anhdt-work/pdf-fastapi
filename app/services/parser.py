@@ -1,10 +1,5 @@
 import re
 import unicodedata
-import logging
-
-logger = logging.getLogger(__name__)
-
-_TRIM_CHARS = " \t\r\n/\\-–—_.:,;|•·*~+!@#$%^&=<>?\"'`()[]{}"
 
 class Parser:
     def __init__(self):
@@ -51,39 +46,52 @@ class Parser:
                     return ["", parts[1], parts[0]]
         
         return ["", "", ""]
-
-    def _clean_symbol(s: str) -> str:
-        return s.strip(_TRIM_CHARS)
     
     def parse_document_number(self, text: str) -> tuple[str, str]:
-        """
-        Trả về (number, symbol)
-        Ví dụ:
-          "123-ABC45"        -> ("123", "ABC45")
-          "123"              -> ("123", "")
-          "ABC45"            -> ("", "ABC45")
-          "123 - ABC45"      -> ("123", "ABC45")
-          "123/ABC45"        -> ("123", "ABC45")
-          "123/ABC45-123"    -> ("123", "ABC45-123")
-          "123/ABC45/123"    -> ("123", "ABC45/123")
-          "Số: 26/BC-ĐT"     -> ("26", "BC-ĐT")
-          "No: 123/ABC"      -> ("123", "ABC")
-          "123 -  /BC-ĐT"    -> ("123", "BC-ĐT")
-        """
+        # parse document number from text format NUMBER-SYMBOL or NUMBER, return a tuple [number, symbol]
+        # Example: 123-ABC45 -> (123, ABC45)
+        # Example: 123 -> (123, "")
+        # Example: ABC45 -> ("", ABC45)
+        # Example: 123 - ABC45 -> (123, ABC45)  # handles spaces around hyphen
+        # Example: 123/ABC45 -> (123, ABC45)
+        # Example: 123/ABC45-123 -> (123, ABC45-123)
+        # Example: 123/ABC45/123 -> (123, ABC45/123)
+        # Example: Số: 26/BC-ĐT -> (26, BC-ĐT)
+        # Example: No: 123/ABC -> (123, ABC)
         try:
             if not text:
                 return "", ""
 
-            t = text.strip()
-            t = re.sub(r'^(?:Số|So|No)\s*:?\s*', '', t, flags=re.IGNORECASE).strip()
-            m = re.match(r'^(\d+)(.*)$', t)
-            if m:
-                number = m.group(1)
-                symbol = _clean_symbol(m.group(2))
-                return number, symbol
+            text = text.strip()
 
-            return "", _clean_symbol(t)
+            # Bỏ prefix thường gặp
+            text = re.sub(r'^(Số:|So:|No:)\s*', '', text, flags=re.IGNORECASE).strip()
 
+            parts = []
+            is_number = False
+            for i, char in enumerate(text):
+                if char.isdigit():
+                    is_number = True
+                if is_number and not char.isdigit() and i > 0:
+                    parts = [text[:i], text[i:]]
+                    break
+
+            if len(parts) == 1:
+                if parts[0].isdigit():
+                    return parts[0], ""
+                else:
+                    return "", format_text(parts[0])
+
+            if not parts or len(parts) == 0:
+                return "", ""
+
+            number_part = parts[0].strip()
+            symbol_part = parts[1].strip() if len(parts) > 1 else ""
+
+            # Convert number part thành số
+            numb = "".join([c for c in number_part if c.isdigit()])
+
+            return numb, format_text(symbol_part)
         except Exception:
             return "", ""
     
@@ -156,16 +164,6 @@ titles = [
 ]
 
 def format_text(text: str) -> str:
-    text = text.strip()
-    if text and text[0] == "-":
-        text = text[1:]
-    # remove all multiple spaces and newlines
-    text = text.replace("\n", "")
-    text = text.replace("Kí hiệu", "")
-    text = text.replace("Kí hiệu:", "")
-    text = text.replace("Số", "")
-    text = text.replace("Số:", "")
-    text = text.replace(":", "")
-    return text
+    return re.sub(r'^\W+|\W+$', '', text).strip()
 
 parser = Parser()
