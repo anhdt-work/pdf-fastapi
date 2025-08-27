@@ -48,7 +48,7 @@ class Parser:
         return ["", "", ""]
 
     def format_text(text: str) -> str:
-        return re.sub(r'^\W+|\W+$', '', text).strip()
+        return re.sub(r'^[^0-9\wÀ-ỹ]+|[^0-9\wÀ-ỹ]+$', '', text, flags=re.UNICODE).strip()
     
     def parse_document_number(self, text: str) -> tuple[str, str]:
         # parse document number from text format NUMBER-SYMBOL or NUMBER, return a tuple [number, symbol] 
