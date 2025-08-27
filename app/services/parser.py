@@ -48,6 +48,22 @@ class Parser:
         return ["", "", ""]
     
     def parse_document_number(self, text: str) -> tuple[str, str]:
+        try:
+            if not text:
+                return "", ""
+            match = re.match(r'^(\d+)\s*(.*)$', s.strip())
+            if match:
+                number = match.group(1)
+                text = match.group(2)
+                text = re.sub(r'^[^A-Za-z0-9]+', '', text)
+                text = re.sub(r'[^A-Za-z0-9]+$', '', text)
+                return number, text
+            else:
+                text = re.sub(r'^[^A-Za-z0-9]+', '', s.strip())
+                text = re.sub(r'[^A-Za-z0-9]+$', '', text)
+                return None, text
+        except Exception:
+            return "", ""
         # parse document number from text format NUMBER-SYMBOL or NUMBER, return a tuple [number, symbol] 
         # Example: 123-ABC45 -> (123, ABC45)
         # Example: 123 -> (123, "")
@@ -58,48 +74,48 @@ class Parser:
         # Example: 123/ABC45/123 -> (123, ABC45/123)
         # Example: Số: 26/BC-ĐT -> (26, BC-ĐT)
         # Example: No: 123/ABC -> (123, ABC)
-        try:
-            if not text:
-                return "", ""
-
-            # Clean up the text - remove extra spaces
-            text = text.strip()
-
-            # Remove common document number prefixes (Vietnamese and English)
-            # Clean up again after prefix removal
-            text = text.strip()
-
-            parts = []
-            is_number = False
-            for i, char in enumerate(text):
-                if char.isdigit():
-                    is_number = True
-                if is_number and not char.isdigit() and i > 0:
-                    parts = [text[:i], text[i:]]
-                    break
-
-            if len(parts) == 1:
-                # Only one part - check if it's a number or symbol
-                if parts[0].isdigit():
-                    return parts[0], ""
-                else:
-                    return "", format_text(parts[0])
-
-            # Multiple parts - first part should be number, second part should be symbol
-            if not parts or len(parts) == 0:
-                return  "", ""
-            number_part = parts[0].strip()
-            symbol_part = parts[1].strip() if len(parts) > 1 else ""
-
-            # Validate that first part is a number
-            numb = 0
-            for char in number_part:
-                if char.isdigit():
-                    numb = numb * 10 +  int(char)
-
-            return numb, format_text(symbol_part)
-        except Exception:
-            return "", ""
+#         try:
+#             if not text:
+#                 return "", ""
+#
+#             # Clean up the text - remove extra spaces
+#             text = text.strip()
+#
+#             # Remove common document number prefixes (Vietnamese and English)
+#             # Clean up again after prefix removal
+#             text = text.strip()
+#
+#             parts = []
+#             is_number = False
+#             for i, char in enumerate(text):
+#                 if char.isdigit():
+#                     is_number = True
+#                 if is_number and not char.isdigit() and i > 0:
+#                     parts = [text[:i], text[i:]]
+#                     break
+#
+#             if len(parts) == 1:
+#                 # Only one part - check if it's a number or symbol
+#                 if parts[0].isdigit():
+#                     return parts[0], ""
+#                 else:
+#                     return "", format_text(parts[0])
+#
+#             # Multiple parts - first part should be number, second part should be symbol
+#             if not parts or len(parts) == 0:
+#                 return  "", ""
+#             number_part = parts[0].strip()
+#             symbol_part = parts[1].strip() if len(parts) > 1 else ""
+#
+#             # Validate that first part is a number
+#             numb = 0
+#             for char in number_part:
+#                 if char.isdigit():
+#                     numb = numb * 10 +  int(char)
+#
+#             return numb, format_text(symbol_part)
+#         except Exception:
+#             return "", ""
     
     def parse_author(self, text: str):
         pass
