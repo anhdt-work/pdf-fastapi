@@ -8,7 +8,7 @@ from transformers import AutoModel, AutoTokenizer
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
-MODEL_NAME = "5CD-AI/Vintern-1B-v3_5"
+MODEL_NAME = "tienanh2k1409/pdf-text"
 
 
 class MODEL:
