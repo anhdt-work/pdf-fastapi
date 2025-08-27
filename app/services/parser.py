@@ -84,7 +84,7 @@ class Parser:
                 if parts[0].isdigit():
                     return parts[0], ""
                 else:
-                    return "", parts[0]
+                    return "", format_text(parts[0])
 
             # Multiple parts - first part should be number, second part should be symbol
             if not parts or len(parts) == 0:
@@ -98,7 +98,7 @@ class Parser:
                 if char.isdigit():
                     numb = numb * 10 +  int(char)
 
-            return numb, symbol_part
+            return numb, format_text(symbol_part)
         except Exception:
             return "", ""
     
@@ -170,5 +170,15 @@ titles = [
     "Thư công"
 ]
 
+def format_text(text: str) -> str:
+    text = text.strip()
+    # remove all multiple spaces and newlines
+    text = text.replace("\n", "")
+    text = text.replace("Kí hiệu", "")
+    text = text.replace("Kí hiệu:", "")
+    text = text.replace("Số", "")
+    text = text.replace("Số:", "")
+    text = text.replace(":", "")
+    return text
 
 parser = Parser()
