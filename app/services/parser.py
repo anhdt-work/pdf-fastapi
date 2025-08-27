@@ -35,7 +35,13 @@ class Parser:
                     continue
                 
                 if len(parts) == 3:
-                    return [parts[0], parts[1], parts[2]]
+                    # Check if this is YYYY-MM-DD or YYYY/MM/DD format
+                    if len(parts[0]) == 4 and parts[0].isdigit():
+                        # YYYY-MM-DD format -> return [day, month, year]
+                        return [parts[2], parts[1], parts[0]]
+                    else:
+                        # DD-MM-YYYY format -> return [day, month, year]
+                        return [parts[0], parts[1], parts[2]]
                 elif len(parts) == 2:
                     return ["", parts[1], parts[0]]
         
