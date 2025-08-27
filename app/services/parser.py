@@ -70,12 +70,12 @@ class Parser:
             text = text.strip()
 
             parts = []
+            is_number = False
             for char in text:
-                if char == '-':
-                    parts = text.split('-', 1)  # Split only once
-                    break
-                elif char == '/':
-                    parts = text.split('/', 1)  # Split only once
+                if char.isdigit():
+                    is_number = True
+                if is_number and not char.isdigit():
+                    parts = text.split(char, 1)
                     break
 
 
