@@ -71,13 +71,12 @@ class Parser:
 
             parts = []
             is_number = False
-            for char in text:
+            for i, char in enumerate(text):
                 if char.isdigit():
                     is_number = True
-                if is_number and not char.isdigit():
-                    parts = text.split(char, 1)
+                if is_number and not char.isdigit() and i > 0:
+                    parts = [text[:i], text[i:]]
                     break
-
 
             if len(parts) == 1:
                 # Only one part - check if it's a number or symbol
