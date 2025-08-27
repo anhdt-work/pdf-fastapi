@@ -97,7 +97,7 @@ class Parser:
             # Convert number part thành số
             numb = "".join([c for c in number_part if c.isdigit()])
 
-            logger.info(f"format_text: {document_symbol}")
+            logger.info(f"format_text: {format_text(symbol_part)}")
 
             return numb, format_text(symbol_part)
         except Exception:
