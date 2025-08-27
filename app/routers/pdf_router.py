@@ -117,14 +117,14 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
                 gc.collect()
             error = 'Signed'
             signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
-            if signed and signed != "Không có" or signed != "Không có.":
+            if signed != "Không có" and signed != "Không có.":
                 final_signed = signed
             torch.cuda.empty_cache()  # if using GPU
             gc.collect()
             error = 'Full text'
-            full_text += vintern_ai_service.generate_chat(pixel_values, GET_FULL_TEXT_PROMPT)
-            torch.cuda.empty_cache()  # if using GPU
-            gc.collect()
+            # full_text += vintern_ai_service.generate_chat(pixel_values, GET_FULL_TEXT_PROMPT)
+            # torch.cuda.empty_cache()  # if using GPU
+            # gc.collect()
         error = 'Parse date'
         day, month, year = parser.parse_date(date_data)
         error = 'Parse document number'
