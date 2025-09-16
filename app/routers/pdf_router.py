@@ -107,6 +107,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         for i in range(len(png_images)):
             image_path = os.path.join(folder_key, f"{i+1}.PNG")
             ocr_texts = tesseract_service.process_image_file(image_path)
+            print(ocr_texts)
             response = deepseek_service.get_response_ocr(ocr_texts)
             if not response.get("have_data", False):
                 continue
