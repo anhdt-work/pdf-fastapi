@@ -1,6 +1,7 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import json
+import gc
 
 
 class DeepSeekService:
@@ -52,6 +53,7 @@ class DeepSeekService:
 
             # Parse JSON response
             json_response = json.loads(response)
+            gc.collect()
             return json_response
         except json.JSONDecodeError as e:
             # Xử lý lỗi nếu response không phải JSON hợp lệ

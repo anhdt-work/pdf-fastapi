@@ -443,7 +443,7 @@ class TesseractService:
         # Take 5 first boxes with text and 5 last boxes with text
         ocr_texts = 'Đây là phần có tên cơ quan ban hành, số hiệu văn bản, ngày tháng năm ban hành\n'
         for i in range (len(boxes_with_text)):
-            if i < 5:
+            if i < 8:
                 if not boxes_with_text[i]['extracted_text']:
                     continue
                 ocr_texts += f"Dòng {i + 1}: {boxes_with_text[i]['extracted_text']} \n"
