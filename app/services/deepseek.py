@@ -32,7 +32,7 @@ class DeepSeekService:
             ])
 
             model = OllamaLLM(
-                model="deepseek-v2:16b-lite-chat-fp16",
+                model="qwen2.5:14b",
                 temperature=0.1,
                 top_k=50,
                 top_p=0.95,
