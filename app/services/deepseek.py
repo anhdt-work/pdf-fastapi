@@ -47,6 +47,7 @@ class DeepSeekService:
         try:
             # Invoke chain
             response = self._chain.invoke({"question": question})
+            print("Raw response from model:", response)
 
             # Parse JSON response
             json_response = json.loads(response)
