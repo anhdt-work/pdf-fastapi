@@ -15,7 +15,8 @@ class DeepSeekService:
     def __init__(self):
         if DeepSeekService._chain is None:
             prompt_template = ChatPromptTemplate.from_messages([
-                ("system", """Bạn là một chuyên gia trích xuất dữ liệu từ các văn bản hành chính. 
+                ("system", """Bạn là một chuyên gia trích xuất dữ liệu từ các văn bản hành chính.
+                    Hãy loại bỏ các phần như Cộng hòa, ...
                     Hãy trả về dưới định dạng JSON với các trường sau:
                     {{
                         "have_data": "Trả về True hoặc False nếu đây là trang dùng để trích xuất dữ liệu các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
@@ -26,7 +27,7 @@ class DeepSeekService:
                         "trich_yeu": "Tên của văn bản này",
                         "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
                     }}
-                    Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể, Nếu không có giá trị nào thì để giá trị Không có."""),
+                    Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể trừ trường hợp sai ngữ pháp hãy sửa lại, Nếu không có giá trị nào thì để giá trị Không có."""),
                 ("human","{question}"),
             ])
 

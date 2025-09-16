@@ -444,6 +444,8 @@ class TesseractService:
         ocr_texts = ''
         for i in range (len(boxes_with_text)):
             if i < 5 or i >= len(boxes_with_text) - 5:
+                if not boxes_with_text[i]['extracted_text']:
+                    continue
                 ocr_texts += f"Dòng {i + 1}: {boxes_with_text[i]['extracted_text']} \n"
         return ocr_texts
 
