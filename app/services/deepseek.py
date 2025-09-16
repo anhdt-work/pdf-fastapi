@@ -17,7 +17,7 @@ class DeepSeekService:
             prompt_template = ChatPromptTemplate.from_messages([
                 ("system", """Bạn là một chuyên gia trích xuất dữ liệu từ các văn bản hành chính. 
                     Hãy trả về dưới định dạng JSON với các trường sau:
-                    {
+                    {{
                         "have_data": "Trả về True hoặc False nếu đây là trang dùng để trích xuất dữ liệu các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
                         "co_quan": "Cơ quan ban hành văn bản này",
                         "so_van_ban" : "Sô hiệu của văn bản ", # Thường có dạng 4433/BYT-KCB 
@@ -25,7 +25,7 @@ class DeepSeekService:
                         "loai_van_ban": "Đây là loại văn bản gì",
                         "trich_yeu": "Tên của văn bản này",
                         "nguoi_ky": "Người ký văn bản này" 
-                    }
+                    }}
                     Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể, Nếu không có giá trị nào thì để giá trị Không có."""),
                 ("human","{question}"),
             ])
