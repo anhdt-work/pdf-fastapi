@@ -19,10 +19,10 @@ class DeepSeekService:
                     Hãy loại bỏ các phần như Cộng hòa, ...
                     Hãy trả về dưới định dạng JSON với các trường sau:
                     {{
-                        "have_data": "Trả về True hoặc False nếu đây là trang dùng để trích xuất dữ liệu các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
+                        "have_data": "Trả về True hoặc False nếu đây là trang dùng có dữ liệu trích xuất được các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
                         "co_quan": "Cơ quan ban hành văn bản này, thường ở phần đầu của văn bản",
-                        "so_van_ban" : "Sô hiệu của văn bản này", # Thường có dạng 4433/BYT-KCB 
-                        "ngay_ban_hanh": "DD/MM/YYYY", Trả về dạng DD/MM/YYYY,nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
+                        "so_van_ban" : "Sô hiệu của văn bản này", # Thường có dạng 4433/BYT-KCB, trả
+                        "ngay_ban_hanh": "DD/MM/YYYY", Thường có dạng Địa Điểm, ngày .. tháng .. năm .... .Trả về dạng DD/MM/YYYY,nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
                         "loai_van_ban": "Đây là loại văn bản gì, thường ở phần đầu của trích yếu như quyết định, thông tư, nghị định, công văn, chỉ thị, kế hoạch,...",
                         "trich_yeu": "Tên của văn bản này, thường ở sau phần loại văn bản",
                         "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
