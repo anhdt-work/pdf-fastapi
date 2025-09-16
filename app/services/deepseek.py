@@ -36,8 +36,7 @@ class DeepSeekService:
                 temperature=0.1,
                 top_k=50,
                 top_p=0.95,
-                format="json",
-                reasoning=True,
+                format="json"
             )
             DeepSeekService._chain = prompt_template | model
 
