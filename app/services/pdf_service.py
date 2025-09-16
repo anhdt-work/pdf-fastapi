@@ -6,6 +6,9 @@ import os
 
 logger = logging.getLogger(__name__)
 
+A4_WIDTH = 2480
+A4_HEIGHT = 3508
+
 class PDFService:
     @staticmethod
     async def convert_to_png(pdf_content: bytes) -> List[bytes]:
@@ -20,8 +23,8 @@ class PDFService:
         """
         try:
             # Convert PDF to images
-            images = convert_from_bytes(pdf_content)
-            
+            images = convert_from_bytes(pdf_content, dpi=300, fmt='png', size=(A4_WIDTH, A4_HEIGHT))
+
             # Convert each image to PNG bytes
             png_images = []
             for i, image in enumerate(images):
@@ -29,13 +32,11 @@ class PDFService:
                 img_byte_arr = io.BytesIO()
                 image.save(img_byte_arr, format='PNG')
                 png_images.append(img_byte_arr.getvalue())
-
-                logger.info(f"Converted page {i+1} to PNG")
-            
             return png_images
-            
+
         except Exception as e:
             logger.error(f"Error converting PDF to PNG: {str(e)}")
             raise
 
-pdf_service = PDFService() 
+
+pdf_service = PDFService()

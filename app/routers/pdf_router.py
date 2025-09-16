@@ -9,7 +9,7 @@ from typing import Dict, Any, List
 
 import torch
 from app.services.pdf_service import pdf_service
-from app.services.vintern import vintern_ai_service
+# from app.services.vintern import vintern_ai_service
 from app.services.parser import parser
 import logging
 from app.template.result import result
@@ -17,6 +17,8 @@ from app.template.result import result
 from app.utils.prom import GET_AUTHOR, GET_DATE_PROMPT, GET_DOCUMENT_NUMBER, GET_FULL_TEXT_PROMPT, GET_TITLE_PROMPT, \
     GET_DOCUMENT_SIGNED
 
+from app.services.tesseract import tesseract_service
+from app.services.deepseek import deepseek_service
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["PDF"])
@@ -95,37 +97,35 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         # Process image to AI model
         full_text = ""
         final_signed = ""
+        have_data = False
+        have_signed = False
+        date_data = ""
+        document_number_data = ""
+        author_data = ""
+        title_data = ""
+        doc_type = ""
         for i in range(len(png_images)):
             image_path = os.path.join(folder_key, f"{i+1}.PNG")
-            pixel_values = vintern_ai_service.generate_input(image_path)
-            if i == 0:
-                error = 'Date'
-                date_data = vintern_ai_service.generate_chat(pixel_values, GET_DATE_PROMPT)
-                torch.cuda.empty_cache()  # if using GPU
-                gc.collect()
-                error = 'Document number'
-                document_number_data = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_NUMBER)
-                torch.cuda.empty_cache()  # if using GPU
-                gc.collect()
-                error = 'Author'
-                author_data = vintern_ai_service.generate_chat(pixel_values, GET_AUTHOR)
-                torch.cuda.empty_cache()  # if using GPU
-                gc.collect()
-                error = 'Title'
-                title_data = vintern_ai_service.generate_chat(pixel_values, GET_TITLE_PROMPT)
-                torch.cuda.empty_cache()  # if using GPU
-                gc.collect()
-            error = 'Signed'
-            signed = vintern_ai_service.generate_chat(pixel_values, GET_DOCUMENT_SIGNED)
-            if signed != "Không có" and signed != "Không có.":
-                final_signed = signed
-            torch.cuda.empty_cache()  # if using GPU
-            gc.collect()
-            error = 'Full text'
-            # full_text += vintern_ai_service.generate_chat(pixel_values, GET_FULL_TEXT_PROMPT)
-            # torch.cuda.empty_cache()  # if using GPU
-            # gc.collect()
-        error = 'Parse date'
+            ocr_texts = tesseract_service.process_image_file(image_path)
+            response = deepseek_service.get_response_ocr(ocr_texts)
+            if not response.get("have_data", False):
+                continue
+            if not date_data:
+                date_data = response.get("ngay_ban_hanh", "")
+            if not document_number_data:
+                document_number_data = response.get("so_van_ban", "")
+            if not author_data:
+                author_data = response.get("co_quan", "")
+            if not title_data:
+                title_data = response.get("trich_yeu", "")
+            if not doc_type:
+                doc_type = response.get("loai_van_ban", "")
+            if response.get("nguoi_ky", "").lower() not in ("không có", "khong co", ""):
+                have_signed = True
+                final_signed = response.get("nguoi_ky", "")
+            if have_data and have_signed:
+                break
+
         day, month, year = parser.parse_date(date_data)
         error = 'Parse document number'
         document_number, document_symbol = parser.parse_document_number(document_number_data)
@@ -141,7 +141,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         result['Field2'] = document_number
         result['Field3'] = document_symbol
         result['Field6'] = f"{day}/{month}/{year}"
-        result['Field7'] = parser.parse_title(title_data)
+        result['Field7'] = doc_type
         result['Field8'] = parser.parse_full_title(title_data)
         result['Field11'] = final_signed
         result['Field13'] = day

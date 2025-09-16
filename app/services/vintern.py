@@ -457,4 +457,4 @@ class VinternAIService:
         except Exception as e:
             return {"error": str(e)}
 
-vintern_ai_service = VinternAIService()
+# vintern_ai_service = VinternAIService()
