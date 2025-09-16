@@ -441,12 +441,15 @@ class TesseractService:
         boxes_with_text = self.extract_all_boxes_text(processed, boxes)
 
         # Take 5 first boxes with text and 5 last boxes with text
-        ocr_texts = ''
+        ocr_texts = 'Đây là phần có tên cơ quan ban hành, số hiệu văn bản, ngày tháng năm ban hành\n'
         for i in range (len(boxes_with_text)):
-            if i < 5 or i >= len(boxes_with_text) - 5:
+            if i < 5:
                 if not boxes_with_text[i]['extracted_text']:
                     continue
                 ocr_texts += f"Dòng {i + 1}: {boxes_with_text[i]['extracted_text']} \n"
+            if i >= len(boxes_with_text) - 3:
+                ocr_texts += 'Tìm tên người ký trong này: \n'
+                ocr_texts += f"{boxes_with_text[i]['extracted_text']} \n"
         return ocr_texts
 
 tesseract_service = TesseractService()
