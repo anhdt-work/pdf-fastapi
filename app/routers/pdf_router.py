@@ -109,6 +109,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             ocr_texts = tesseract_service.process_image_file(image_path)
             print(ocr_texts)
             response = deepseek_service.get_response_ocr(ocr_texts)
+            print(response)
             if not response.get("have_data", False):
                 continue
             if not date_data:
