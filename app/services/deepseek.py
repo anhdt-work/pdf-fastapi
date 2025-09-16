@@ -19,12 +19,12 @@ class DeepSeekService:
                     Hãy trả về dưới định dạng JSON với các trường sau:
                     {{
                         "have_data": "Trả về True hoặc False nếu đây là trang dùng để trích xuất dữ liệu các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
-                        "co_quan": "Cơ quan ban hành văn bản này",
-                        "so_van_ban" : "Sô hiệu của văn bản ", # Thường có dạng 4433/BYT-KCB 
+                        "co_quan": "Cơ quan ban hành văn bản này, chỉ lấy tên cơ quan không lấy phần số ban hành",
+                        "so_van_ban" : "Sô hiệu của văn bản này, thường cùng dòng với cơ quan ban hành", # Thường có dạng 4433/BYT-KCB 
                         "ngay_ban_hanh": "DD/MM/YYYY", # Nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
-                        "loai_van_ban": "Đây là loại văn bản gì",
+                        "loai_van_ban": "Đây là loại văn bản gì, thường ở phần đầu của trích yếu như quyết định, thông tư, nghị định, công văn, chỉ thị, kế hoạch,...",
                         "trich_yeu": "Tên của văn bản này",
-                        "nguoi_ky": "Người ký văn bản này" 
+                        "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
                     }}
                     Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể, Nếu không có giá trị nào thì để giá trị Không có."""),
                 ("human","{question}"),

@@ -122,7 +122,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
                 title_data = response.get("trich_yeu", "")
             if not doc_type:
                 doc_type = response.get("loai_van_ban", "")
-            if response.get("nguoi_ky", "").lower() not in ("không có", "khong co", ""):
+            if response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower() not in ("không có", "khong co", ""):
                 have_signed = True
                 final_signed = response.get("nguoi_ky", "")
             if have_data and have_signed:
