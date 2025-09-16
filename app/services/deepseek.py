@@ -20,11 +20,11 @@ class DeepSeekService:
                     Hãy trả về dưới định dạng JSON với các trường sau:
                     {{
                         "have_data": "Trả về True hoặc False nếu đây là trang dùng để trích xuất dữ liệu các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
-                        "co_quan": "Cơ quan ban hành văn bản này, chỉ lấy tên cơ quan không lấy phần số ban hành",
-                        "so_van_ban" : "Sô hiệu của văn bản này, thường cùng dòng với cơ quan ban hành", # Thường có dạng 4433/BYT-KCB 
-                        "ngay_ban_hanh": "DD/MM/YYYY", # Nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
+                        "co_quan": "Cơ quan ban hành văn bản này, thường ở phần đầu của văn bản",
+                        "so_van_ban" : "Sô hiệu của văn bản này", # Thường có dạng 4433/BYT-KCB 
+                        "ngay_ban_hanh": "DD/MM/YYYY", Trả về dạng DD/MM/YYYY,nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
                         "loai_van_ban": "Đây là loại văn bản gì, thường ở phần đầu của trích yếu như quyết định, thông tư, nghị định, công văn, chỉ thị, kế hoạch,...",
-                        "trich_yeu": "Tên của văn bản này",
+                        "trich_yeu": "Tên của văn bản này, thường ở sau phần loại văn bản",
                         "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
                     }}
                     Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể trừ trường hợp sai ngữ pháp hãy sửa lại, Nếu không có giá trị nào thì để giá trị Không có."""),
@@ -36,7 +36,8 @@ class DeepSeekService:
                 temperature=0.1,
                 top_k=50,
                 top_p=0.95,
-                format="json"
+                format="json",
+                reasoning=True,
             )
             DeepSeekService._chain = prompt_template | model
 

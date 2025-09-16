@@ -17,7 +17,7 @@ import numpy as np
 #         return False
 
 class TesseractService:
-    def __init__(self, dpi = 300, lang='vie', max_chars = 150, psm = 6, pixel_margin = 20):
+    def __init__(self, dpi = 300, lang='vie', max_chars = 200, psm = 6, pixel_margin = 20):
         self.tesseract_path = '/usr/bin/tesseract'
         self.dpi = dpi
         self.lang = lang
