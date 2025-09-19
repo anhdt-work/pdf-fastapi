@@ -57,6 +57,8 @@ class QwenVisionService:
                 response_content = response.content
             else:
                 response_content = response
+            print("Response content to parse:", response_content)
+            print(type(response_content))
             json_response = json.loads(response_content)
             gc.collect()
             return json_response
