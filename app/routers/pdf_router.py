@@ -108,6 +108,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             image_path = os.path.join(folder_key, f"{i+1}.PNG")
             ocr_texts = tesseract_service.process_image_file(image_path)
             response = deepseek_service.get_response_ocr(ocr_texts)
+            print("RESPONSE:", response)
             if not date_data or date_data.lower() not in ("không có", "khong co", ""):
                 date_data = response.get("ngay_ban_hanh", "")
             if not document_number_data or document_number_data.lower() not in ("không có", "khong co", ""):
@@ -256,6 +257,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         for i in range(len(png_images)):
             image_path = os.path.join(folder_key, f"{i + 1}.PNG")
             response = qwen_service.get_response_ocr(image_path)
+            print("RESPONSE:", response)
             if not date_data or date_data.lower() not in ("không có", "khong co", ""):
                 date_data = response.get("ngay_ban_hanh", "")
             if not document_number_data or document_number_data.lower() not in ("không có", "khong co", ""):
@@ -406,6 +408,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         for i in range(len(png_images)):
             image_path = os.path.join(folder_key, f"{i + 1}.PNG")
             response = qwen_service.get_response_ocr(image_path)
+            print("RESPONSE:", response)
             if not date_data or date_data.lower() not in ("không có", "khong co", ""):
                 date_data = response.get("ngay_ban_hanh", "")
             if not document_number_data or document_number_data.lower() not in ("không có", "khong co", ""):
