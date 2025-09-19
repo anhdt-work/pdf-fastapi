@@ -427,6 +427,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
                 final_signed = response.get("nguoi_ky", "")
             if i > 3:
                 break
+        print("\nDone Loop")
         day, month, year = parser.parse_date(date_data)
         error = 'Parse document number'
         document_number, document_symbol = parser.parse_document_number(document_number_data)
