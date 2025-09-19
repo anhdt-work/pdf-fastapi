@@ -43,6 +43,8 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
+    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    folder_key = os.path.join(parent_dir, "images", folder_name)
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -82,8 +84,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         png_images = await pdf_service.convert_to_png(content)
         
         # Create a unique folder for this upload
-        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-        folder_key = os.path.join(parent_dir, "images", folder_name)
+
         os.makedirs(folder_key, exist_ok=True)
         # if folder is not empty, remove all files in the folder
         if os.listdir(folder_key):
@@ -193,6 +194,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
+    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    folder_key = os.path.join(parent_dir, "images", folder_name)
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -231,9 +234,6 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         # Convert PDF to PNG
         png_images = await pdf_service.convert_to_png(content)
 
-        # Create a unique folder for this upload
-        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-        folder_key = os.path.join(parent_dir, "images", folder_name)
         os.makedirs(folder_key, exist_ok=True)
         # if folder is not empty, remove all files in the folder
         if os.listdir(folder_key):
@@ -344,6 +344,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
+    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    folder_key = os.path.join(parent_dir, "images", folder_name)
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -383,8 +385,6 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         result = await gov_pdf_service.convert_government_doc(content)
         png_images = result["images"]
         # Create a unique folder for this upload
-        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-        folder_key = os.path.join(parent_dir, "images", folder_name)
         os.makedirs(folder_key, exist_ok=True)
         # if folder is not empty, remove all files in the folder
         if os.listdir(folder_key):

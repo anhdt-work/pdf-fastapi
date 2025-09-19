@@ -53,7 +53,11 @@ class QwenVisionService:
             print("Raw response from model:", response)
 
             # Parse JSON response
-            json_response = json.loads(response)
+            if hasattr(response, "content"):
+                response_content = response.content
+            else:
+                response_content = response
+            json_response = json.loads(response_content)
             gc.collect()
             return json_response
         except json.JSONDecodeError as e:
