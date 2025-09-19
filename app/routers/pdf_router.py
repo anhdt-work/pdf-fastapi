@@ -273,6 +273,9 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
             if response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower() not in ("không có",
                                                                                              "khong co", ""):
                 final_signed = response.get("nguoi_ky", "")
+            # Log all the value here
+            print(f"Page {i+1}: date_data={date_data}, document_number_data={document_number_data}, author_data={author_data}, title_data={title_data}, doc_type={doc_type}, final_signed={final_signed}")
+
             if i > 3:
                 break
         day, month, year = parser.parse_date(date_data)
