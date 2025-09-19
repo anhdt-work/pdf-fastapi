@@ -446,7 +446,7 @@ class TesseractService:
             if i < 8:
                 if not boxes_with_text[i]['extracted_text']:
                     continue
-                ocr_texts += f"Dòng {i + 1}: {boxes_with_text[i]['extracted_text']} \n"
+                ocr_texts += f"{boxes_with_text[i]['extracted_text']} \n"
             if i >= len(boxes_with_text) - 3:
                 ocr_texts += 'Tìm tên người ký trong này: \n'
                 ocr_texts += f"{boxes_with_text[i]['extracted_text']} \n"

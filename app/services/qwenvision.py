@@ -1,10 +1,11 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_ollama import ChatOllama
 import json
 import gc
 
 
-class DeepSeekService:
+class QwenVisionService:
     _instance = None
     _chain = None
 
@@ -14,7 +15,7 @@ class DeepSeekService:
         return cls._instance
 
     def __init__(self):
-        if DeepSeekService._chain is None:
+        if QwenVisionService._chain is None:
             prompt_template = ChatPromptTemplate.from_messages([
                 ("system", """Bạn là một chuyên gia trích xuất dữ liệu từ các văn bản hành chính.
                     Hãy loại bỏ các phần như Cộng hòa, ...
@@ -29,17 +30,17 @@ class DeepSeekService:
                         "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
                     }}
                     Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể trừ trường hợp sai ngữ pháp hãy sửa lại, Nếu không có giá trị nào thì để giá trị Không có."""),
-                ("human","{question}"),
+                ("human",[{"type": "image_url", "image_url": {"url": "{question}"}}]),
             ])
 
-            model = OllamaLLM(
-                model="qwen2.5:14b",
+            model = ChatOllama(
+                model="qwen2.5vl:32b-q8_0",
                 temperature=0.1,
                 top_k=50,
                 top_p=0.95,
                 format="json"
             )
-            DeepSeekService._chain = prompt_template | model
+            QwenVisionService._chain = prompt_template | model
 
     def get_response_ocr(self, question: str):
         """
@@ -67,4 +68,4 @@ class DeepSeekService:
              "error": str(e)
             }
 
-deepseek_service = DeepSeekService()
+qwen_service = QwenVisionService()
