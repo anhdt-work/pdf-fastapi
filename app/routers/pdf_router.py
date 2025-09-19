@@ -43,8 +43,8 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
-    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-    folder_key = os.path.join(parent_dir, "images", folder_name)
+    folder_key = None
+
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -69,7 +69,8 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
             
         # Get folder name without extension
         folder_name = file.filename.rsplit('.', 1)[0] if '.' in file.filename else file.filename
-        
+        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+        folder_key = os.path.join(parent_dir, "images", folder_name)
         # Read file content
         content = await file.read()
         
@@ -172,7 +173,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> JSONResponse:
         ) 
     finally:
         # Remove all files in the folder
-        if os.listdir(folder_key):
+        if folder_key and os.listdir(folder_key):
             for file in os.listdir(folder_key):
                 os.remove(os.path.join(folder_key, file))
 
@@ -194,8 +195,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
-    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-    folder_key = os.path.join(parent_dir, "images", folder_name)
+    folder_key = None
+
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -220,7 +221,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
 
         # Get folder name without extension
         folder_name = file.filename.rsplit('.', 1)[0] if '.' in file.filename else file.filename
-
+        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+        folder_key = os.path.join(parent_dir, "images", folder_name)
         # Read file content
         content = await file.read()
 
@@ -323,7 +325,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         )
     finally:
         # Remove all files in the folder
-        if os.listdir(folder_key):
+        if folder_key and os.listdir(folder_key):
             for file in os.listdir(folder_key):
                 os.remove(os.path.join(folder_key, file))
 
@@ -344,8 +346,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         - Total processing time: Logged at completion
     """
     error = 'Start'
-    parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-    folder_key = os.path.join(parent_dir, "images", folder_name)
+    folder_key = None
+
     try:
         # Validate file exists and has a filename
         if not file.filename:
@@ -370,7 +372,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
 
         # Get folder name without extension
         folder_name = file.filename.rsplit('.', 1)[0] if '.' in file.filename else file.filename
-
+        parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+        folder_key = os.path.join(parent_dir, "images", folder_name)
         # Read file content
         content = await file.read()
 
@@ -474,7 +477,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         )
     finally:
         # Remove all files in the folder
-        if os.listdir(folder_key):
+        if folder_key and os.listdir(folder_key):
             for file in os.listdir(folder_key):
                 os.remove(os.path.join(folder_key, file))
 
