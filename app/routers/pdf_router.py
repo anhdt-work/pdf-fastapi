@@ -270,7 +270,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
                 title_data = response.get("trich_yeu", "")
             if not doc_type or doc_type.lower()  in ("không có", "khong co", ""):
                 doc_type = response.get("loai_van_ban", "")
-            if response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower()  in ("không có",
+            if not final_signed and response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower() not in ("không có",
                                                                                              "khong co", ""):
                 final_signed = response.get("nguoi_ky", "")
             # Log all the value here
