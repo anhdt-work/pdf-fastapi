@@ -380,8 +380,8 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
             )
 
         # Convert PDF to PNG
-        png_images = await gov_pdf_service.convert_government_doc(content)["images"]
-
+        result = await gov_pdf_service.convert_government_doc(content)
+        png_images = result["images"]
         # Create a unique folder for this upload
         parent_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
         folder_key = os.path.join(parent_dir, "images", folder_name)
