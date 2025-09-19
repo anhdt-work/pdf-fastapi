@@ -260,17 +260,17 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
             image_path = os.path.join(folder_key, f"{i + 1}.PNG")
             response = qwen_service.get_response_ocr(image_path)
             print("RESPONSE:", response)
-            if not date_data or date_data.lower() not in ("không có", "khong co", ""):
+            if not date_data or date_data.lower()  in ("không có", "khong co", ""):
                 date_data = response.get("ngay_ban_hanh", "")
-            if not document_number_data or document_number_data.lower() not in ("không có", "khong co", ""):
+            if not document_number_data or document_number_data.lower()  in ("không có", "khong co", ""):
                 document_number_data = response.get("so_van_ban", "")
-            if not author_data or author_data.lower() not in ("không có", "khong co", ""):
+            if not author_data or author_data.lower()  in ("không có", "khong co", ""):
                 author_data = response.get("co_quan", "")
-            if not title_data or title_data.lower() not in ("không có", "khong co", ""):
+            if not title_data or title_data.lower()  in ("không có", "khong co", ""):
                 title_data = response.get("trich_yeu", "")
-            if not doc_type or doc_type.lower() not in ("không có", "khong co", ""):
+            if not doc_type or doc_type.lower()  in ("không có", "khong co", ""):
                 doc_type = response.get("loai_van_ban", "")
-            if response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower() not in ("không có",
+            if response.get("nguoi_ky", "") and response.get("nguoi_ky", "").lower()  in ("không có",
                                                                                              "khong co", ""):
                 final_signed = response.get("nguoi_ky", "")
             # Log all the value here
