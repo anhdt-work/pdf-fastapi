@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Ensure logs directory exists
+mkdir -p logs
+
+# Truncate log if larger than 100MB
+if [ -f logs/app.log ] && [ $(stat -c%s "logs/app.log") -gt $((100*1024*1024)) ]; then
+    echo "Log file too large (>100MB), truncating..."
+    : > logs/app.log
+fi
+
 echo "Starting PDF-to-Text API with uvicorn in background..."
 
 # Activate virtual environment if it exists
@@ -23,3 +32,5 @@ echo "📖 Docs: http://localhost:8000/docs"
 echo "🔄 Auto-reload: Enabled"
 echo "🔍 View logs: tail -f logs/app.log"
 echo "⏹️  Stop app: ./stop_service.sh"
+echo "ℹ️  For dependency installation, run setup.sh once before using this script."
+echo "ℹ️  For production log rotation, consider using 'logrotate' on logs/app.log."
