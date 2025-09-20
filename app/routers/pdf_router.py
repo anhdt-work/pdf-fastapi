@@ -517,8 +517,7 @@ async def upload_pdf_qwen_optimized(file: UploadFile = File(...)) -> JSONRespons
             raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
         # Convert PDF to PNG
-        images_metadata = await gov_pdf_service.convert_government_doc(content)
-        png_images = images_metadata["images"]
+        png_images = await pdf_service.convert_to_png(content)
 
         # Initialize optimized processor
         processor = OptimizedPDFProcessor(qwen_service, max_pages=4)
