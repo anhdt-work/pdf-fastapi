@@ -1,6 +1,7 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_ollama import ChatOllama
+import torch
 import json
 import gc
 
@@ -42,6 +43,14 @@ class QwenVisionService:
             )
             QwenVisionService._chain = prompt_template | model
 
+    def cleanup_memory(self):
+        """Aggressive memory cleanup"""
+        gc.collect()
+        # Clear GPU cache nếu có GPU
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+
     def get_response_ocr(self, question: str):
         """
         Gửi câu hỏi và nhận response dạng JSON
@@ -60,7 +69,7 @@ class QwenVisionService:
             print("Response content to parse:", response_content)
             print(type(response_content))
             json_response = json.loads(response_content)
-            gc.collect()
+            self.cleanup_memory()
             return json_response
         except json.JSONDecodeError as e:
             # Xử lý lỗi nếu response không phải JSON hợp lệ
@@ -73,5 +82,6 @@ class QwenVisionService:
              "answer": "Error occurred while processing request",
              "error": str(e)
             }
+
 
 qwen_service = QwenVisionService()
