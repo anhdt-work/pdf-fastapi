@@ -464,6 +464,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
         result['PageCount2A0'] = 0
         result['PageCount3A0'] = 0
         result['PageCount4A0'] = 0
+        gc.collect()
         return JSONResponse(
             content=result,
             status_code=200
