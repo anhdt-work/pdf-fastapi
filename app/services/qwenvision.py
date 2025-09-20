@@ -4,11 +4,15 @@ from langchain_ollama import ChatOllama
 import torch
 import json
 import gc
+import threading
+import time
 
 
 class QwenVisionService:
     _instance = None
     _chain = None
+    _model_loaded = False
+    _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -16,40 +20,52 @@ class QwenVisionService:
         return cls._instance
 
     def __init__(self):
-        if QwenVisionService._chain is None:
-            prompt_template = ChatPromptTemplate.from_messages([
-                ("system", """Bạn là một chuyên gia trích xuất dữ liệu từ các văn bản hành chính.
-                    Hãy loại bỏ các phần như Cộng hòa, ...
-                    Hãy trả về dưới định dạng JSON với các trường sau:
-                    {{
-                        "have_data": "Trả về True hoặc False nếu đây là trang có dữ liệu trích xuất được các trường bên dưới, nếu là trang bìa hoặc trang không có dữ liệu thì trả về False",
-                        "co_quan": "Cơ quan ban hành văn bản này, thường ở phần đầu của văn bản",
-                        "so_van_ban" : "Sô hiệu của văn bản này", # Thường có dạng 4433/BYT-KCB, trả
-                        "ngay_ban_hanh": "DD/MM/YYYY", Thường có dạng Địa Điểm, ngày .. tháng .. năm .... .Trả về dạng DD/MM/YYYY,nếu không có hoặc thiếu giá trị nào để giá trị 00 cho giá trị đó nếu là ngày và tháng, 0000 cho năm
-                        "loai_van_ban": "Đây là loại văn bản gì, thường ở phần đầu của trích yếu như quyết định, thông tư, nghị định, công văn, chỉ thị, kế hoạch,...",
-                        "trich_yeu": "Tên của văn bản này, thường ở sau phần loại văn bản",
-                        "nguoi_ky": "Người ký văn bản này, thường ở phần cuối của văn bản " 
-                    }}
-                    Giữ nguyên giá trị của các trường sao cho đúng với văn bản gốc nhất có thể trừ trường hợp sai ngữ pháp hãy sửa lại, Nếu không có giá trị nào thì để giá trị Không có."""),
-                ("human",[{"type": "image_url", "image_url": {"url": "{question}"}}]),
-            ])
+        if not QwenVisionService._model_loaded:
+            with QwenVisionService._lock:
+                if not QwenVisionService._model_loaded:
+                    self._init_optimized_chain()
+                    QwenVisionService._model_loaded = True
 
-            model = ChatOllama(
-                model="qwen2.5vl:32b-q8_0",
-                temperature=0.1,
-                top_k=50,
-                top_p=0.95,
-                format="json"
-            )
-            QwenVisionService._chain = prompt_template | model
+    def _init_optimized_chain(self):
+        """Tối ưu prompt cho A6000"""
+        print("Initializing optimized chain for RTX A6000...")
 
-    def cleanup_memory(self):
-        """Aggressive memory cleanup"""
-        gc.collect()
-        # Clear GPU cache nếu có GPU
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-            torch.cuda.synchronize()
+        # Prompt ngắn gọn để giảm tokens
+        prompt_template = ChatPromptTemplate.from_messages([
+            ("system", """Trích xuất JSON từ văn bản:
+            {{
+              "have_data": true/false,
+              "co_quan": "Cơ quan",
+              "so_van_ban": "Số văn bản", 
+              "ngay_ban_hanh": "DD/MM/YYYY",
+              "loai_van_ban": "Loại",
+              "trich_yeu": "Trích yếu",
+              "nguoi_ky": "Người ký"
+            }}"""),
+                    ("human", [{"type": "image_url", "image_url": {"url": "{question}"}}]),
+        ])
+
+        # Cấu hình tối ưu cho A6000 48GB
+        model = ChatOllama(
+            model="qwen2.5vl:32b-q8_0",
+            temperature=0.1,
+            format="json",
+            options={
+                # Tối ưu cho A6000
+                "num_ctx": 2048,  # Tăng context để tận dụng VRAM
+                "num_predict": 512,  # Đủ cho JSON response
+                "num_keep": 0,  # Không giữ context cũ
+                "num_batch": 4,  # A6000 có thể handle batch lớn hơn
+                "num_thread": 8,  # Tận dụng CPU threads
+                "numa": True,  # Enable NUMA cho performance
+                "use_mmap": True,  # Memory mapping
+                "use_mlock": True,  # Lock memory
+                "low_vram": False,# Không cần low_vram với 48GB
+            }
+        )
+        QwenVisionService._chain = prompt_template | model
+        print("Chain initialized successfully")
+
 
     def get_response_ocr(self, question: str):
         """
@@ -66,10 +82,7 @@ class QwenVisionService:
                 response_content = response.content
             else:
                 response_content = response
-            print("Response content to parse:", response_content)
-            print(type(response_content))
             json_response = json.loads(response_content)
-            self.cleanup_memory()
             return json_response
         except json.JSONDecodeError as e:
             # Xử lý lỗi nếu response không phải JSON hợp lệ
@@ -79,9 +92,8 @@ class QwenVisionService:
             }
         except Exception as e:
             return {
-             "answer": "Error occurred while processing request",
-             "error": str(e)
+                "answer": "Error occurred while processing request",
+                "error": str(e)
             }
-
 
 qwen_service = QwenVisionService()
