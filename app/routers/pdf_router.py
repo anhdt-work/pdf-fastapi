@@ -394,8 +394,7 @@ async def upload_pdf_qwen(file: UploadFile = File(...)) -> JSONResponse:
             )
 
         # Convert PDF to PNG
-        images_metadata = await gov_pdf_service.convert_government_doc(content)
-        png_images = images_metadata["images"]
+        png_images = await pdf_service.convert_to_png(content)
         # Create a unique folder for this upload
         os.makedirs(folder_key, exist_ok=True)
         # if folder is not empty, remove all files in the folder
