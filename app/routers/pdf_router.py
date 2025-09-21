@@ -105,7 +105,7 @@ async def upload_pdf_qwen_optimized(file: UploadFile = File(...)) -> JSONRespons
         result['PageCount2A0'] = 0
         result['PageCount3A0'] = 0
         result['PageCount4A0'] = 0
-        result['IsHandWriting '] = extracted_data.get("is_full_handwritten", 0)
+        result['IsHandWriting'] = extracted_data.get("is_full_handwritten", 0)
 
         # Light cleanup
         del png_images
