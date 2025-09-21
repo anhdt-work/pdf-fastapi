@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import logging
 from app.routers import pdf_router
+from app.routers import  google_router
 from app.config.settings import settings
 
 # Configure logging
@@ -32,6 +33,11 @@ def create_app() -> FastAPI:
         pdf_router.router,
         prefix=settings.API_PREFIX,
         tags=["PDF"]
+    )
+    app.include_router(
+        google_router.router,
+        prefix=settings.API_PREFIX,
+        tags=["Google"]
     )
     
     return app
