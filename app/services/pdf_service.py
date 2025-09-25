@@ -6,8 +6,8 @@ import os
 
 logger = logging.getLogger(__name__)
 
-A4_WIDTH = 990
-A4_HEIGHT = 1400
+A4_WIDTH = 2480
+A4_HEIGHT = 3508
 
 class PDFService:
     @staticmethod
