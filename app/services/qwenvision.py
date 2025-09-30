@@ -48,7 +48,7 @@ class QwenVisionService:
 
         # Cấu hình tối ưu cho A6000 48GB
         model = ChatOllama(
-            model="qwen2.5vl:32b-q8_0",
+            model="qwen2.5vl:32b",
             temperature=0.1,
             format="json",
             options={
