@@ -40,7 +40,7 @@ class QwenVisionService:
               "ngay_ban_hanh": "DD/MM/YYYY",
               "loai_van_ban": "Loại",
               "trich_yeu": "Trích yếu",
-              "nguoi_ky": "Người ký",
+              "nguoi_ky": "Người ký", // Thường cùng trang với Nơi nhận
               "is_full_handwritten": 0/1
             }}"""),
                     ("human", [{"type": "image_url", "image_url": {"url": "{question}"}}]),
