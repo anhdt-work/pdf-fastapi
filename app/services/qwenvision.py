@@ -32,7 +32,7 @@ class QwenVisionService:
 
         # Prompt ngắn gọn để giảm tokens
         prompt_template = ChatPromptTemplate.from_messages([
-            ("system", """Trích xuất JSON từ văn bản:
+            ("system", """Trích xuất JSON từ văn bản, trường văn bản nào không thấy trả về string Không có:
             {{
               "have_data": true/false,
               "co_quan": "Cơ quan",
@@ -40,7 +40,7 @@ class QwenVisionService:
               "ngay_ban_hanh": "DD/MM/YYYY",
               "loai_van_ban": "Loại",
               "trich_yeu": "Trích yếu",
-              "nguoi_ky": "Người ký văn bản thường ở 2 trang cuối có đóng dấu",
+              "nguoi_ky": "Người ký",
               "is_full_handwritten": 0/1
             }}"""),
                     ("human", [{"type": "image_url", "image_url": {"url": "{question}"}}]),
