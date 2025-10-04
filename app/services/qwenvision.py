@@ -51,18 +51,18 @@ class QwenVisionService:
             model="qwen2.5vl:32b",
             temperature=0.1,
             format="json",
-            options={
-                # Tối ưu cho A6000
-                "num_ctx": 2048,  # Tăng context để tận dụng VRAM
-                "num_predict": 512,  # Đủ cho JSON response
-                "num_keep": 0,  # Không giữ context cũ
-                "num_batch": 4,  # A6000 có thể handle batch lớn hơn
-                "num_thread": 8,  # Tận dụng CPU threads
-                "numa": True,  # Enable NUMA cho performance
-                "use_mmap": True,  # Memory mapping
-                "use_mlock": True,  # Lock memory
-                "low_vram": False,# Không cần low_vram với 48GB
-            }
+            # options={
+            #     # Tối ưu cho A6000
+            #     # "num_ctx": 2048,  # Tăng context để tận dụng VRAM
+            #     # "num_predict": 512,  # Đủ cho JSON response
+            #     # "num_keep": 0,  # Không giữ context cũ
+            #     # "num_batch": 4,  # A6000 có thể handle batch lớn hơn
+            #     # "num_thread": 8,  # Tận dụng CPU threads
+            #     # "numa": True,  # Enable NUMA cho performance
+            #     # "use_mmap": True,  # Memory mapping
+            #     # "use_mlock": True,  # Lock memory
+            #     # "low_vram": False,# Không cần low_vram với 48GB
+            # }
         )
         QwenVisionService._chain = prompt_template | model
         print("Chain initialized successfully")
